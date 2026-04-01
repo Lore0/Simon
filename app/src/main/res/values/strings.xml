@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Simon</string>
+    <string name="end">Fine partita</string>
+    <string name="recap">Riepilogo</string>
 </resources>
