@@ -2,6 +2,7 @@ package com.example.simon
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,10 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Screen1(onRecap: () -> Unit) {
+fun Screen1(onRecap: (String) -> Unit) {
     val buttons = listOf(
         Color.Red to "R",
         Color.Green to "G",
@@ -38,14 +44,19 @@ fun Screen1(onRecap: () -> Unit) {
         Color.Magenta to "M",
     )
 
+    val sequence = rememberSaveable { mutableStateListOf<String>() }
+    val scrollState = rememberScrollState()
     val orientation = LocalConfiguration.current.orientation
+    LaunchedEffect(sequence.size) {
+        scrollState.animateScrollTo(scrollState.maxValue)
+    }
 
     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         // orizzontale
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp), // Padding ridotto per massimizzare lo spazio
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             LazyVerticalGrid(
@@ -59,7 +70,7 @@ fun Screen1(onRecap: () -> Unit) {
             ) {
                 items(buttons) { (colore, lettera) ->
                     Button(
-                        onClick = { },
+                        onClick = { sequence.add(lettera) },
                         colors = ButtonDefaults.buttonColors(containerColor = colore),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -78,24 +89,36 @@ fun Screen1(onRecap: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text = "C, Y, R...",
+                        text = sequence.joinToString(", "),
                         fontSize = 20.sp,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.verticalScroll(scrollState)
                     )
                 }
 
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Button(
-                        onClick = { },
+                        onClick = { sequence.clear() },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
                     ) {
                         Text(stringResource(R.string.clear), color = Color.Black)
                     }
                     Button(
-                        onClick = onRecap,
+                        onClick = {
+                            val res = sequence.joinToString(",")
+                            sequence.clear()
+                            onRecap(res)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(R.string.end))
@@ -119,50 +142,52 @@ fun Screen1(onRecap: () -> Unit) {
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(buttons) { (colore, lettera) ->
                     Button(
-                        onClick = {
-                        },
+                        onClick = { sequence.add(lettera) },
                         colors = ButtonDefaults.buttonColors(containerColor = colore),
-                        modifier = Modifier.fillMaxWidth().height(120.dp),
+                        modifier = Modifier.fillMaxWidth().height(140.dp),
                         shape = RectangleShape
                     ) {
                     }
                 }
             }
-            Text(
-                text = "C, Y, R, M, ...",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(vertical = 24.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = sequence.joinToString(", "),
+                    fontSize = 20.sp,
+                    modifier = Modifier.verticalScroll(scrollState)
+                )
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
-                    onClick = {
-                    },
+                    onClick = { sequence.clear() },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
                 ) {
-                    Text(
-                        text = stringResource(R.string.clear),
-                        color = Color.Black)
+                    Text(stringResource(R.string.clear), color = Color.Black)
                 }
-
                 Button(
-                    onClick = onRecap,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.end),
-                    )
+                    onClick = {
+                        val res = sequence.joinToString(",")
+                        sequence.clear()
+                        onRecap(res)
+                    }, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.end))
                 }
             }
         }
