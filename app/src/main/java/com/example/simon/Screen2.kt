@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Screen2(hist: List<String>) {
+fun Screen2(hist: List<String>, isEmpty: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,8 +39,7 @@ fun Screen2(hist: List<String>) {
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(hist) { seq ->
-                val count = if (seq.isEmpty()) 0 else seq.split(",").size
-
+                val count = seq.split(",").size
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -67,6 +66,36 @@ fun Screen2(hist: List<String>) {
                     )
                 }
                 HorizontalDivider()
+            }
+            if (isEmpty) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp)
+                            .height(IntrinsicSize.Min),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "0",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(40.dp)
+                        )
+                        VerticalDivider(
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.empty_seq),
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    HorizontalDivider()
+                }
             }
         }
     }
