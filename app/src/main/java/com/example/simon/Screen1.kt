@@ -19,8 +19,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -96,6 +101,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
+                        .padding(bottom = 15.dp)
                         .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
                         .padding(10.dp),
                     contentAlignment = Alignment.Center
@@ -109,16 +115,26 @@ fun Screen1(onRecap: (String) -> Unit) {
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
                         onClick = { sequence.clear() },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 15.dp),
+                            .height(45.dp),
+                        shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
                     ) {
-                        Text(stringResource(R.string.clear), color = Color.Black)
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            stringResource(R.string.clear),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                     Button(
                         onClick = {
@@ -126,9 +142,21 @@ fun Screen1(onRecap: (String) -> Unit) {
                             sequence.clear()
                             onRecap(res)
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
-                        Text(stringResource(R.string.end))
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            stringResource(R.string.end),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -179,18 +207,43 @@ fun Screen1(onRecap: (String) -> Unit) {
             ) {
                 Button(
                     onClick = { sequence.clear() },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
                 ) {
-                    Text(stringResource(R.string.clear), color = Color.Black)
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        stringResource(R.string.clear),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Button(
                     onClick = {
                         val res = sequence.joinToString(",")
                         sequence.clear()
                         onRecap(res)
-                    }, modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.end))
+                    }, modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        stringResource(R.string.end),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
