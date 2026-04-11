@@ -1,6 +1,7 @@
 package com.example.simon
 
 import android.content.res.Configuration
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -64,7 +65,7 @@ fun Screen1(onRecap: (String) -> Unit) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
-                    .weight(1.2f)
+                    .weight(1.1f)
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -94,7 +95,9 @@ fun Screen1(onRecap: (String) -> Unit) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                        .padding(10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -110,7 +113,9 @@ fun Screen1(onRecap: (String) -> Unit) {
                 ) {
                     Button(
                         onClick = { sequence.clear() },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 15.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
                     ) {
                         Text(stringResource(R.string.clear), color = Color.Black)
@@ -136,12 +141,6 @@ fun Screen1(onRecap: (String) -> Unit) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.app_name),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(8.dp),
@@ -160,9 +159,11 @@ fun Screen1(onRecap: (String) -> Unit) {
             }
             Box(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.6f)
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 18.dp)
+                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                    .padding(8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
