@@ -70,7 +70,7 @@ fun Screen1(onRecap: (String) -> Unit) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
-                    .weight(1.1f)
+                    .weight(0.8f)
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -113,14 +113,16 @@ fun Screen1(onRecap: (String) -> Unit) {
                     )
                 }
 
-                Column(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Button(
                         onClick = { sequence.clear() },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(1f)
                             .height(45.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
@@ -144,6 +146,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                         },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(1f)
                             .height(45.dp),
                         shape = RoundedCornerShape(16.dp)
                     ) {
