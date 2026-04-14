@@ -59,7 +59,6 @@ fun Screen1(onRecap: (String) -> Unit) {
     }
 
     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        // orizzontale
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -125,7 +124,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                             .weight(1f)
                             .height(45.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
@@ -165,7 +164,6 @@ fun Screen1(onRecap: (String) -> Unit) {
             }
         }
     } else {
-        // verticale
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -182,7 +180,9 @@ fun Screen1(onRecap: (String) -> Unit) {
                     Button(
                         onClick = { sequence.add(lettera) },
                         colors = ButtonDefaults.buttonColors(containerColor = colore),
-                        modifier = Modifier.fillMaxWidth().height(140.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
                         shape = RectangleShape
                     ) {
                     }

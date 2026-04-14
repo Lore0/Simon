@@ -37,7 +37,8 @@ class MainActivity : ComponentActivity() {
                         enterTransition = { fadeIn(animationSpec = tween(150)) },
                         exitTransition = { fadeOut(animationSpec = tween(150)) },
                         popEnterTransition = { fadeIn(animationSpec = tween(150)) },
-                        popExitTransition = { fadeOut(animationSpec = tween(150)) }                    ) {
+                        popExitTransition = { fadeOut(animationSpec = tween(150)) }
+                    ) {
                         composable("screen1") {
                             Screen1(
                                 onRecap = { seq ->
