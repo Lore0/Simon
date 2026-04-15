@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Simon</string>
+    <string name="app_name" translatable="false">Simon</string>
     <string name="end">Fine partita</string>
     <string name="clear">Cancella</string>
     <string name="recap">Riepilogo</string>
-    <string name="empty_seq">Sequenza in corso...</string>
+    <string name="empty_seq">Partita in corso...</string>
 </resources>

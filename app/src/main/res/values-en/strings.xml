@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simon</string>
+    <string name="end">End game</string>
+    <string name="clear">Delete</string>
+    <string name="recap">Recap</string>
+    <string name="empty_seq">Game in progress...</string>
+</resources>
