@@ -133,7 +133,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                         )
                         Text(
                             stringResource(R.string.clear),
-                            fontSize = 18.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -156,7 +156,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                         )
                         Text(
                             stringResource(R.string.end),
-                            fontSize = 18.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -223,7 +223,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                     )
                     Text(
                         stringResource(R.string.clear),
-                        fontSize = 18.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -244,7 +244,7 @@ fun Screen1(onRecap: (String) -> Unit) {
                     )
                     Text(
                         stringResource(R.string.end),
-                        fontSize = 18.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
