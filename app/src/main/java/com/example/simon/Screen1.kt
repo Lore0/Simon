@@ -75,10 +75,10 @@ fun Screen1(onRecap: (String) -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(8.dp),
             ) {
-                items(buttons) { (colore, lettera) ->
+                items(buttons) { (color, letter) ->
                     Button(
-                        onClick = { sequence.add(lettera) },
-                        colors = ButtonDefaults.buttonColors(containerColor = colore),
+                        onClick = { sequence.add(letter) },
+                        colors = ButtonDefaults.buttonColors(containerColor = color),
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
@@ -176,10 +176,10 @@ fun Screen1(onRecap: (String) -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(buttons) { (colore, lettera) ->
+                items(buttons) { (color, letter) ->
                     Button(
-                        onClick = { sequence.add(lettera) },
-                        colors = ButtonDefaults.buttonColors(containerColor = colore),
+                        onClick = { sequence.add(letter) },
+                        colors = ButtonDefaults.buttonColors(containerColor = color),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(140.dp),
