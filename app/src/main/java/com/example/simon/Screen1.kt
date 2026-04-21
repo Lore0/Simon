@@ -216,7 +216,6 @@ private fun ActionButtons(
                 .weight(1f)
                 .height(height.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
         ) {
             Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
             Text(stringResource(R.string.clear), fontSize = 16.sp, fontWeight = FontWeight.Bold)
