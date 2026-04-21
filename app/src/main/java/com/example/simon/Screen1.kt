@@ -1,11 +1,12 @@
 package com.example.simon
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,215 +41,201 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+private val simonButtons = listOf(
+    Color.Red to "R",
+    Color.Green to "G",
+    Color.Blue to "B",
+    Color.Yellow to "Y",
+    Color.Cyan to "C",
+    Color.Magenta to "M",
+)
+
 @Composable
 fun Screen1(onRecap: (String) -> Unit) {
-    val buttons = listOf(
-        Color.Red to "R",
-        Color.Green to "G",
-        Color.Blue to "B",
-        Color.Yellow to "Y",
-        Color.Cyan to "C",
-        Color.Magenta to "M",
-    )
 
     val sequence = rememberSaveable { mutableStateListOf<String>() }
     val scrollState = rememberScrollState()
-    val orientation = LocalConfiguration.current.orientation
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // scroll automatico quando riempio il box
     LaunchedEffect(sequence.size) {
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        Row(
+    if (isLandscape) {
+        LandscapeLayout(sequence, scrollState, onRecap)
+    } else {
+        PortraitLayout(sequence, scrollState, onRecap)
+    }
+}
+
+@Composable
+private fun LandscapeLayout(
+    sequence: MutableList<String>,
+    scrollState: ScrollState,
+    onRecap: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .safeDrawingPadding()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // griglia bottoni a sinistra
+        BoxWithConstraints(
             modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .weight(0.8f)
+                .fillMaxHeight()
+                .padding(8.dp)
         ) {
+            val sp = 8.dp
+            val dynHeight = (this.maxHeight - sp * 2) / 3
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .weight(0.8f)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(8.dp),
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(sp),
+                horizontalArrangement = Arrangement.spacedBy(sp),
             ) {
-                items(buttons) { (color, letter) ->
+                items(simonButtons) { (color, letter) ->
                     Button(
                         onClick = { sequence.add(letter) },
                         colors = ButtonDefaults.buttonColors(containerColor = color),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight()
-                            .height(95.dp),
+                            .height(dynHeight),
                         shape = RectangleShape
                     ) {}
                 }
             }
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(bottom = 15.dp)
-                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                        .padding(10.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = sequence.joinToString(", "),
-                        fontSize = 20.sp,
-                        modifier = Modifier.verticalScroll(scrollState)
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Button(
-                        onClick = { sequence.clear() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .height(45.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = null,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(
-                            stringResource(R.string.clear),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Button(
-                        onClick = {
-                            val res = sequence.joinToString(",")
-                            sequence.clear()
-                            onRecap(res)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .height(45.dp),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = null,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(
-                            stringResource(R.string.end),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
         }
-    } else {
+
+        // parte destra: sequenza + bottoni
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxHeight()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
+            SequenceBox(sequence, scrollState, Modifier.weight(1f).padding(bottom = 15.dp))
+            ActionButtons(sequence, onRecap, height = 45)
+        }
+    }
+}
+
+@Composable
+private fun PortraitLayout(
+    sequence: MutableList<String>,
+    scrollState: ScrollState,
+    onRecap: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .weight(1.2f)
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            val sp = 12.dp
+            val dynHeight = (this.maxHeight - sp * 2) / 3
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(sp),
+                horizontalArrangement = Arrangement.spacedBy(sp)
             ) {
-                items(buttons) { (color, letter) ->
+                items(simonButtons) { (color, letter) ->
                     Button(
                         onClick = { sequence.add(letter) },
                         colors = ButtonDefaults.buttonColors(containerColor = color),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(140.dp),
+                            .height(dynHeight),
                         shape = RectangleShape
-                    ) {
-                    }
+                    ) {}
                 }
             }
-            Box(
-                modifier = Modifier
-                    .weight(0.6f)
-                    .fillMaxWidth()
-                    .padding(vertical = 18.dp)
-                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                    .padding(8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = sequence.joinToString(", "),
-                    fontSize = 20.sp,
-                    modifier = Modifier.verticalScroll(scrollState)
-                )
-            }
+        }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Button(
-                    onClick = { sequence.clear() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(
-                        stringResource(R.string.clear),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Button(
-                    onClick = {
-                        val res = sequence.joinToString(",")
-                        sequence.clear()
-                        onRecap(res)
-                    }, modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(
-                        stringResource(R.string.end),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+        SequenceBox(
+            sequence, scrollState,
+            Modifier
+                .weight(0.6f)
+                .padding(vertical = 18.dp),
+        )
+
+        ActionButtons(sequence, onRecap, height = 50)
+    }
+}
+
+@Composable
+private fun SequenceBox(
+    sequence: List<String>,
+    scrollState: ScrollState,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = sequence.joinToString(", "),
+            fontSize = 20.sp,
+            modifier = Modifier.verticalScroll(scrollState)
+        )
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    sequence: MutableList<String>,
+    onRecap: (String) -> Unit,
+    height: Int
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // clear
+        Button(
+            onClick = { sequence.clear() },
+            modifier = Modifier
+                .weight(1f)
+                .height(height.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+        ) {
+            Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Text(stringResource(R.string.clear), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        }
+
+        // fine sequenza
+        Button(
+            onClick = {
+                val res = sequence.joinToString(",")
+                sequence.clear()
+                onRecap(res)
+            },
+            modifier = Modifier
+                .weight(1f)
+                .height(height.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Icon(Icons.Default.Done, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Text(stringResource(R.string.end), fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

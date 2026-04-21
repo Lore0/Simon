@@ -30,10 +30,12 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val hist = rememberSaveable { mutableStateListOf<String>() }
                 var isEmpty by rememberSaveable { mutableStateOf(false) }
+                
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController, startDestination = "screen1",
                         modifier = Modifier.padding(innerPadding),
+                        // diminuita animazione di default (troppo lenta)
                         enterTransition = { fadeIn(animationSpec = tween(150)) },
                         exitTransition = { fadeOut(animationSpec = tween(150)) },
                     ) {

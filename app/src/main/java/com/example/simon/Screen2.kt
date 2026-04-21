@@ -28,14 +28,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun Screen2(hist: List<String>, isEmpty: Boolean) {
-    val orientation = LocalConfiguration.current.orientation
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .then(
-                if (orientation == Configuration.ORIENTATION_LANDSCAPE) Modifier.safeDrawingPadding()
-                else Modifier
-            )
+            .then(if (isLandscape) Modifier.safeDrawingPadding() else Modifier)
             .padding(16.dp)
     ) {
         Text(
@@ -45,66 +43,46 @@ fun Screen2(hist: List<String>, isEmpty: Boolean) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()) {
             items(hist) { seq ->
-                val count = seq.split(",").size
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp)
-                        .height(IntrinsicSize.Min),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "$count",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.width(40.dp)
-                    )
-                    VerticalDivider(
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                    Text(
-                        text = seq,
-                        fontSize = 18.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                HorizontalDivider()
+                Recap(count = seq.split(",").size, text = seq)
             }
+
+            // fine senza inserire niente
             if (isEmpty) {
                 item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp)
-                            .height(IntrinsicSize.Min),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "0",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width(40.dp)
-                        )
-                        VerticalDivider(
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.empty_seq),
-                            fontSize = 18.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    HorizontalDivider()
+                    Recap(count = 0, text = stringResource(R.string.empty_seq))
                 }
             }
         }
     }
+}
+
+@Composable
+private fun Recap(count: Int, text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+            .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "$count",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.width(40.dp)
+        )
+        VerticalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+        Text(
+            text = text,
+            fontSize = 18.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+    }
+    HorizontalDivider()
 }
