@@ -1,6 +1,7 @@
 package com.example.simon
 
 import android.content.res.Configuration
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,12 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -29,6 +32,11 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun Screen2(hist: List<String>, isEmpty: Boolean) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val scrollState = rememberLazyListState()
+    // scroll automatico
+    LaunchedEffect(hist.size) {
+        scrollState.animateScrollToItem(hist.size - 1)
+    }
 
     Column(
         modifier = Modifier
@@ -44,7 +52,10 @@ fun Screen2(hist: List<String>, isEmpty: Boolean) {
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize()) {
+            modifier = Modifier.fillMaxSize(),
+            state = scrollState,
+            userScrollEnabled = true
+        ) {
             items(hist) { seq ->
                 Recap(count = seq.split(",").size, text = seq)
             }
