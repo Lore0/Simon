@@ -29,8 +29,7 @@ class MainActivity : ComponentActivity() {
             SimonTheme {
                 val navController = rememberNavController()
                 val hist = rememberSaveable { mutableStateListOf<String>() }
-                var isEmpty by rememberSaveable { mutableStateOf(false) }
-                
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController, startDestination = "screen1",
@@ -42,18 +41,13 @@ class MainActivity : ComponentActivity() {
                         composable("screen1") {
                             Screen1(
                                 onRecap = { seq ->
-                                    if (seq.isNotEmpty()) {
-                                        hist.add(seq)
-                                        isEmpty = false
-                                    } else {
-                                        isEmpty = true
-                                    }
+                                    hist.add(seq)
                                     navController.navigate("screen2")
                                 }
                             )
                         }
                         composable("screen2") {
-                            Screen2(hist = hist, isEmpty = isEmpty)
+                            Screen2(hist = hist)
                         }
                     }
                 }

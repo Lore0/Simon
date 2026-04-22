@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Screen2(hist: List<String>, isEmpty: Boolean) {
+fun Screen2(hist: List<String>) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberLazyListState()
     // scroll automatico
@@ -57,14 +57,8 @@ fun Screen2(hist: List<String>, isEmpty: Boolean) {
             userScrollEnabled = true
         ) {
             items(hist) { seq ->
-                Recap(count = seq.split(",").size, text = seq)
-            }
-
-            // fine senza inserire niente
-            if (isEmpty) {
-                item {
-                    Recap(count = 0, text = stringResource(R.string.empty_seq))
-                }
+                val count = if (seq.isEmpty()) 0 else seq.split(",").size
+                Recap(count, text = seq)
             }
         }
     }
