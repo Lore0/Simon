@@ -2,6 +2,7 @@ package com.example.simon
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -170,7 +171,7 @@ private fun PortraitLayout(
             sequence, scrollState,
             Modifier
                 .weight(0.6f)
-                .padding(vertical = 18.dp),
+                .padding(vertical = 24.dp),
         )
 
         ActionButtons(sequence, onRecap, height = 50)
@@ -187,12 +188,13 @@ private fun SequenceBox(
         modifier = modifier
             .fillMaxWidth()
             .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+            .background(Color.White, RoundedCornerShape(8.dp))
             .padding(8.dp),
-        contentAlignment = Alignment.Center
     ) {
         Text(
             text = sequence.joinToString(", "),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
+            color = Color.Black,
             modifier = Modifier.verticalScroll(scrollState)
         )
     }
