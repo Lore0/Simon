@@ -219,8 +219,8 @@ private fun ActionButtons(
                 .height(height.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
-            Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-            Text(stringResource(R.string.clear), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+            Text(stringResource(R.string.clear), fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
 
         // fine sequenza
@@ -235,8 +235,8 @@ private fun ActionButtons(
                 .height(height.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(Icons.Default.Done, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-            Text(stringResource(R.string.end), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Icon(Icons.Default.Done, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+            Text(stringResource(R.string.end), fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
