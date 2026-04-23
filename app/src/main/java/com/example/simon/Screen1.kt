@@ -56,6 +56,7 @@ fun Screen1(onRecap: (String) -> Unit) {
 
     val sequence = rememberSaveable { mutableStateListOf<String>() }
     val scrollState = rememberScrollState()
+    // telefono orizzontale
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     // scroll automatico quando riempio il box
@@ -91,6 +92,7 @@ private fun LandscapeLayout(
                 .padding(8.dp)
         ) {
             val sp = 8.dp
+            // calcolo altezza
             val dynHeight = (this.maxHeight - sp * 2) / 3
 
             LazyVerticalGrid(
@@ -146,6 +148,7 @@ private fun PortraitLayout(
                 .padding(8.dp)
         ) {
             val sp = 12.dp
+            // calcolo altezza
             val dynHeight = (this.maxHeight - sp * 2) / 3
 
             LazyVerticalGrid(

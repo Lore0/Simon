@@ -1,7 +1,6 @@
 package com.example.simon
 
 import android.content.res.Configuration
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun Screen2(hist: List<String>) {
+    // telefono orizzontale
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberLazyListState()
     // scroll automatico
