@@ -4,5 +4,4 @@
     <string name="end">End game</string>
     <string name="clear">Delete</string>
     <string name="recap">Recap</string>
-    <string name="empty_seq">Game in progress...</string>
 </resources>
