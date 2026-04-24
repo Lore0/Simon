@@ -12,3 +12,7 @@ Consegna 1 (intermedia) del progetto di **ESP**. Consiste in un primo prototipo 
 ### Ambiente di sviluppo
 - Android Studio Panda 1 (version: 21.0.9)
 - neovim (version: 0.11.1)
+
+---
+
+*Lorenzo Panizzolo - 2117022*
