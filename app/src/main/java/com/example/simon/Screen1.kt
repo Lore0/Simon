@@ -141,6 +141,7 @@ private fun PortraitLayout(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // griglia di bottoni in alto
         BoxWithConstraints(
             modifier = Modifier
                 .weight(1.2f)
@@ -194,6 +195,7 @@ private fun SequenceBox(
             .background(Color.White, RoundedCornerShape(8.dp))
             .padding(8.dp),
     ) {
+        // sequenza premuta
         Text(
             text = sequence.joinToString(", "),
             fontSize = 18.sp,

@@ -44,6 +44,7 @@ fun Screen2(hist: List<String>) {
             .then(if (isLandscape) Modifier.safeDrawingPadding() else Modifier)
             .padding(16.dp)
     ) {
+        // titolo
         Text(
             text = stringResource(R.string.recap),
             fontSize = 20.sp,
@@ -73,6 +74,7 @@ private fun Recap(count: Int, text: String) {
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // numero di bottoni premuti
         Text(
             text = "$count",
             fontSize = 20.sp,
@@ -81,6 +83,7 @@ private fun Recap(count: Int, text: String) {
             modifier = Modifier.width(40.dp)
         )
         VerticalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+        // sequenza di bottoni
         Text(
             text = text,
             fontSize = 18.sp,
