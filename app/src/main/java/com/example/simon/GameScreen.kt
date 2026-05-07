@@ -52,7 +52,7 @@ private val simonButtons = listOf(
 )
 
 @Composable
-fun Screen1(onRecap: (String) -> Unit) {
+fun GameScreen(onRecap: (String) -> Unit) {
 
     val sequence = rememberSaveable { mutableStateListOf<String>() }
     val scrollState = rememberScrollState()

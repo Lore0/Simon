@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                         exitTransition = { fadeOut(animationSpec = tween(150)) },
                     ) {
                         composable("screen1") {
-                            Screen1(
+                            GameScreen(
                                 onRecap = { seq ->
                                     hist.add(seq)
                                     navController.navigate("screen2")
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("screen2") {
-                            Screen2(hist = hist)
+                            ListScreen(hist = hist)
                         }
                     }
                 }
