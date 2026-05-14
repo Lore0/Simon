@@ -1,6 +1,7 @@
 package com.example.simon
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,17 +22,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,30 +47,37 @@ private val simonButtons = listOf(
 )
 
 @Composable
-fun GameScreen(onRecap: (String) -> Unit) {
-
-    val sequence = rememberSaveable { mutableStateListOf<String>() }
-    val scrollState = rememberScrollState()
-    // telefono orizzontale
+fun GameScreen(
+    viewModel: GameViewModel,
+    onRecap: () -> Unit
+) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val state = viewModel.state
+    val scrollState = rememberScrollState()
 
-    // scroll automatico quando riempio il box
-    LaunchedEffect(sequence.size) {
+    LaunchedEffect(viewModel.playerSeq.size) {
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 
+    BackHandler {
+        viewModel.handleGameOver(
+            errorIndex = viewModel.playerSeq.size
+        )
+        onRecap()
+    }
+
     if (isLandscape) {
-        LandscapeLayout(sequence, scrollState, onRecap)
+        LandscapeLayout(viewModel, scrollState, onRecap)
     } else {
-        PortraitLayout(sequence, scrollState, onRecap)
+        PortraitLayout(viewModel, scrollState, onRecap)
     }
 }
 
 @Composable
 private fun LandscapeLayout(
-    sequence: MutableList<String>,
+    viewModel: GameViewModel,
     scrollState: ScrollState,
-    onRecap: (String) -> Unit
+    onNavigateToList: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -91,29 +93,8 @@ private fun LandscapeLayout(
                 .fillMaxHeight()
                 .padding(8.dp)
         ) {
-            val sp = 8.dp
-            // calcolo altezza
-            val dynHeight = (this.maxHeight - sp * 2) / 3
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(sp),
-                horizontalArrangement = Arrangement.spacedBy(sp),
-            ) {
-                items(simonButtons) { (color, letter) ->
-                    Button(
-                        onClick = { sequence.add(letter) },
-                        colors = ButtonDefaults.buttonColors(containerColor = color),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(dynHeight),
-                        shape = RectangleShape
-                    ) {}
-                }
-            }
+            ColorGrid(viewModel = viewModel, maxHeight = this.maxHeight)
         }
-
         // parte destra: sequenza + bottoni
         Column(
             modifier = Modifier
@@ -123,17 +104,25 @@ private fun LandscapeLayout(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            SequenceBox(sequence, scrollState, Modifier.weight(1f).padding(bottom = 15.dp))
-            ActionButtons(sequence, onRecap, height = 45)
+            SequenceBox(
+                state = viewModel.state,
+                playerSeq = viewModel.playerSeq,
+                scrollState = scrollState,
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
+                    .padding(bottom = 15.dp)
+            )
+            ActionButtons(viewModel, height = 50, onNavigateToList)
         }
     }
 }
 
 @Composable
 private fun PortraitLayout(
-    sequence: MutableList<String>,
+    viewModel: GameViewModel,
     scrollState: ScrollState,
-    onRecap: (String) -> Unit
+    onNavigateToList: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -148,43 +137,60 @@ private fun PortraitLayout(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            val sp = 12.dp
-            // calcolo altezza
-            val dynHeight = (this.maxHeight - sp * 2) / 3
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(sp),
-                horizontalArrangement = Arrangement.spacedBy(sp)
-            ) {
-                items(simonButtons) { (color, letter) ->
-                    Button(
-                        onClick = { sequence.add(letter) },
-                        colors = ButtonDefaults.buttonColors(containerColor = color),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(dynHeight),
-                        shape = RectangleShape
-                    ) {}
-                }
-            }
+            ColorGrid(viewModel = viewModel, maxHeight = this.maxHeight)
         }
-
         SequenceBox(
-            sequence, scrollState,
-            Modifier
-                .weight(0.6f)
-                .padding(vertical = 24.dp),
+            state = viewModel.state,
+            playerSeq = viewModel.playerSeq,
+            scrollState = scrollState,
+            modifier = Modifier
+                .weight(0.3f)
+                .padding(vertical = 12.dp)
         )
+        // Bottoni in basso
+        ActionButtons(viewModel, height = 50, onNavigateToList)
+    }
+}
 
-        ActionButtons(sequence, onRecap, height = 50)
+@Composable
+private fun ColorGrid(viewModel: GameViewModel, maxHeight: androidx.compose.ui.unit.Dp) {
+    val sp = 12.dp
+    // calcolo altezza
+    val dynHeight = (maxHeight - sp * 2) / 3
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(sp),
+        horizontalArrangement = Arrangement.spacedBy(sp)
+    ) {
+        items(simonButtons) { (color, letter) ->
+            val isComputerTurn = viewModel.state == GameState.COMP_TURN || viewModel.state == GameState.PAUSED
+            val shine = viewModel.activeColor == letter
+
+            // si scurisce (alpha 0.3) se COMP_TURN e non è activeColro
+            val displayColor = if (isComputerTurn && !shine) color.copy(alpha = 0.3f) else color
+
+            Button(
+                onClick = { viewModel.onPlayerTurn(letter) },
+                enabled = viewModel.state == GameState.PLAYER_TURN,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = displayColor,
+                    disabledContainerColor = displayColor
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dynHeight),
+                shape = RectangleShape
+            ) {}
+        }
     }
 }
 
 @Composable
 private fun SequenceBox(
-    sequence: List<String>,
+    state: GameState,
+    playerSeq: List<String>,
     scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
@@ -194,12 +200,27 @@ private fun SequenceBox(
             .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
             .background(Color.White, RoundedCornerShape(8.dp))
             .padding(8.dp),
+        contentAlignment = Alignment.TopStart
     ) {
-        // sequenza premuta
+        val isErrorState = state == GameState.GAME_OVER
+
+        val displayText = if (isErrorState) {
+            stringResource(R.string.error_message)
+        } else if (state == GameState.PLAYER_TURN) {
+            playerSeq.joinToString(", ")
+        } else if (state == GameState.PAUSED) {
+            stringResource(R.string.pause)
+        } else {
+            ""
+        }
+
+        val textColor = if (isErrorState) Color.Red else Color.Black
+
         Text(
-            text = sequence.joinToString(", "),
+            text = displayText,
             fontSize = 18.sp,
-            color = Color.Black,
+            color = textColor,
+            fontWeight = if (isErrorState) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier.verticalScroll(scrollState)
         )
     }
@@ -207,41 +228,53 @@ private fun SequenceBox(
 
 @Composable
 private fun ActionButtons(
-    sequence: MutableList<String>,
-    onRecap: (String) -> Unit,
-    height: Int
+    viewModel: GameViewModel,
+    height: Int,
+    onNavigateToList: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // clear
+        // avvia
         Button(
-            onClick = { sequence.clear() },
-            modifier = Modifier
-                .weight(1f)
-                .height(height.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-            Text(stringResource(R.string.clear), fontSize = 15.sp, fontWeight = FontWeight.Bold)
-        }
-
-        // fine sequenza
-        Button(
-            onClick = {
-                val res = sequence.joinToString(",")
-                sequence.clear()
-                onRecap(res)
-            },
-            modifier = Modifier
-                .weight(1f)
-                .height(height.dp),
+            onClick = { viewModel.startGame() },
+            enabled = viewModel.state == GameState.READY,
+            modifier = Modifier.weight(1f).height(height.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(Icons.Default.Done, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-            Text(stringResource(R.string.end), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.start), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        }
+
+        // pausa / riprendi
+        Button(
+            onClick = { viewModel.onPause() },
+            enabled = viewModel.state == GameState.COMP_TURN || viewModel.state == GameState.PAUSED,
+            modifier = Modifier.weight(1f).height(height.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            val pauseText = if (viewModel.state == GameState.PAUSED) {
+                stringResource(R.string.resume)
+            } else {
+                stringResource(R.string.pause)
+            }
+            Text(pauseText, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        }
+
+        // fine partita
+        Button(
+            onClick = {
+                viewModel.handleGameOver(
+                    errorIndex = viewModel.playerSeq.size
+                )
+                onNavigateToList()
+            },
+            enabled = viewModel.state != GameState.READY && viewModel.state != GameState.GAME_OVER,
+            modifier = Modifier.weight(1f).height(height.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(stringResource(R.string.end), fontSize = 14.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
