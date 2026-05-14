@@ -18,7 +18,6 @@ enum class GameState {
     PLAYER_TURN,    // Il computer ha finito, il giocatore deve premere i tasti
     PAUSED,         // Il gioco è in pausa (possibile solo durante COMP_TURN)
     GAME_OVER       // Il giocatore ha sbagliato o ha premuto "Fine partita"
-    // todo : gestire differenza tra sbagliato e "fine partita"
 }
 
 class GameViewModel (application: Application) : AndroidViewModel(application) {
@@ -63,6 +62,53 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
             }
 
             state = GameState.PLAYER_TURN
+        }
+    }
+
+    fun onPlayerTurn(color: String) {
+        if (state != GameState.PLAYER_TURN) return
+
+        playerSeq.add(color)
+        val currentIndex = playerSeq.size - 1
+
+        if (playerSeq[currentIndex] == compSeq[currentIndex]) {
+            // e se siamo alla fine della seq -> vai alla next seq
+            if (playerSeq.size == compSeq.size) {
+                viewModelScope.launch {
+                    // delay per far vedere l'ultima lettera
+                    delay(500)
+                    addNewColor()
+                    playCompSeq()
+                }
+            }
+        } else {
+            handleGameOver(currentIndex)
+        }
+    }
+
+    fun onPause() {
+        if (state == GameState.COMP_TURN) {
+            state = GameState.PAUSED
+        } else if (state == GameState.PAUSED) {
+            state = GameState.COMP_TURN
+        }
+    }
+
+    // default se premo direttamente fine partita (size)
+    fun handleGameOver(errorIndex: Int = playerSeq.size) {
+        if (state == GameState.GAME_OVER) return
+        state = GameState.GAME_OVER
+        if (compSeq.size <= 1) return
+
+        val maxCorrect = compSeq.size - 1
+        val fullString = compSeq.joinToString(",")
+        viewModelScope.launch {
+            val newGame = Game(
+                maxCorrectLength = maxCorrect,
+                sequence = fullString,
+                errorIndex = errorIndex
+            )
+            gameDao.insertGame(newGame)
         }
     }
 }
