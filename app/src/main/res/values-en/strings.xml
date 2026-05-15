@@ -2,9 +2,11 @@
 <resources>
     <string name="app_name">Simon</string>
     <string name="end">End game</string>
-    <string name="recap">Recap</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
     <string name="start">Start</string>
     <string name="error_message">YOU\'RE WRONG!\nPress Back to exit.</string>
+    <string name="new_game">New game</string>
+    <string name="recap">Recap games</string>
+    <string name="empty_games">There aren\'t any played games. Press play to start!</string>
 </resources>

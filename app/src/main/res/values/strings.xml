@@ -2,9 +2,11 @@
 <resources>
     <string name="app_name" translatable="false">Simon</string>
     <string name="end">Fine partita</string>
-    <string name="recap">Riepilogo</string>
     <string name="pause">Pausa</string>
     <string name="resume">Riprendi</string>
     <string name="start">Avvia</string>
     <string name="error_message">HAI SBAGLIATO!\nPremi Back per uscire.</string>
+    <string name="new_game">Nuova partita</string>
+    <string name="recap">Riepilogo partite</string>
+    <string name="empty_games">Nessuna partita giocata. Premi play per iniziare!</string>
 </resources>
