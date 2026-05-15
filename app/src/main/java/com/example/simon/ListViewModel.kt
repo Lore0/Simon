@@ -11,9 +11,11 @@ import kotlinx.coroutines.launch
 class ListViewModel(application: Application) : AndroidViewModel(application) {
     private val gameDao = GameDatabase.getDatabase(application).gameDao()
     var gamesList = mutableStateListOf<Game>()
+    var selectedGame: Game? = null
     init {
         loadGames()
     }
+
     fun loadGames() {
         viewModelScope.launch {
             val savedGames = gameDao.getAllGames()
