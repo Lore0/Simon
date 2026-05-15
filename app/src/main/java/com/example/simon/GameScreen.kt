@@ -52,7 +52,6 @@ fun GameScreen(
     onRecap: () -> Unit
 ) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val state = viewModel.state
     val scrollState = rememberScrollState()
 
     LaunchedEffect(viewModel.playerSeq.size) {
@@ -77,7 +76,7 @@ fun GameScreen(
 private fun LandscapeLayout(
     viewModel: GameViewModel,
     scrollState: ScrollState,
-    onNavigateToList: () -> Unit
+    onRecap: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -89,7 +88,7 @@ private fun LandscapeLayout(
         // griglia bottoni a sinistra
         BoxWithConstraints(
             modifier = Modifier
-                .weight(0.8f)
+                .weight(0.9f)
                 .fillMaxHeight()
                 .padding(8.dp)
         ) {
@@ -113,7 +112,7 @@ private fun LandscapeLayout(
                     .fillMaxWidth()
                     .padding(bottom = 15.dp)
             )
-            ActionButtons(viewModel, height = 50, onNavigateToList)
+            ActionButtons(viewModel, height = 60, onRecap)
         }
     }
 }
@@ -122,7 +121,7 @@ private fun LandscapeLayout(
 private fun PortraitLayout(
     viewModel: GameViewModel,
     scrollState: ScrollState,
-    onNavigateToList: () -> Unit
+    onRecap: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -148,7 +147,7 @@ private fun PortraitLayout(
                 .padding(vertical = 12.dp)
         )
         // Bottoni in basso
-        ActionButtons(viewModel, height = 50, onNavigateToList)
+        ActionButtons(viewModel, height = 55, onRecap)
     }
 }
 
@@ -230,7 +229,7 @@ private fun SequenceBox(
 private fun ActionButtons(
     viewModel: GameViewModel,
     height: Int,
-    onNavigateToList: () -> Unit
+    onRecap: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -268,7 +267,7 @@ private fun ActionButtons(
                 viewModel.handleGameOver(
                     errorIndex = viewModel.playerSeq.size
                 )
-                onNavigateToList()
+                onRecap()
             },
             enabled = viewModel.state != GameState.READY && viewModel.state != GameState.GAME_OVER,
             modifier = Modifier.weight(1f).height(height.dp),
