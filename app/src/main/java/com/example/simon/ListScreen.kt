@@ -1,5 +1,6 @@
 package com.example.simon
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,8 @@ import com.example.simon.db.Game
 @Composable
 fun ListScreen(
     viewModel: ListViewModel,
-    onPlayGame: () -> Unit
+    onPlayGame: () -> Unit,
+    onDetail: (Game) -> Unit
 ) {
     // prendo da listViewModel
     val games = viewModel.gamesList
@@ -77,7 +79,7 @@ fun ListScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(games) { game ->
-                        GamesRecap(game = game)
+                        GamesRecap(game = game, onClick = { onDetail(game) } )
                     }
                 }
             }
@@ -86,9 +88,11 @@ fun ListScreen(
 }
 
 @Composable
-fun GamesRecap(game: Game) {
+fun GamesRecap(game: Game, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable{ onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
