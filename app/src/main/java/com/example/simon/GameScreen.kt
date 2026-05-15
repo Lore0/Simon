@@ -165,10 +165,10 @@ private fun ColorGrid(viewModel: GameViewModel, maxHeight: androidx.compose.ui.u
     ) {
         items(simonButtons) { (color, letter) ->
             val isComputerTurn = viewModel.state == GameState.COMP_TURN || viewModel.state == GameState.PAUSED
-            val shine = viewModel.activeColor == letter
+            val isActive = viewModel.activeColor == letter
 
-            // si scurisce (alpha 0.3) se COMP_TURN e non è activeColro
-            val displayColor = if (isComputerTurn && !shine) color.copy(alpha = 0.3f) else color
+            val alpha = if (isActive) 1.0f else if (isComputerTurn) 0.35f else 0.6f
+            val displayColor = color.copy(alpha = alpha)
 
             Button(
                 onClick = { viewModel.onPlayerTurn(letter) },

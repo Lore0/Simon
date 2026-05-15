@@ -87,7 +87,11 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
 
     fun onPlayerTurn(color: String) {
         if (state != GameState.PLAYER_TURN) return
-
+        viewModelScope.launch {
+            activeColor = color
+            delay(150)
+            activeColor = null
+        }
         playSound(color)
         playerSeq.add(color)
         val currentIndex = playerSeq.size - 1
