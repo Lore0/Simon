@@ -9,4 +9,7 @@
     <string name="new_game">New game</string>
     <string name="recap">Recap games</string>
     <string name="empty_games">There aren\'t any played games. Press play to start!</string>
+    <string name="detail">Detail game</string>
+    <string name="correct_colors">Maximum correct sequence:</string>
+    <string name="seq">Sequence:</string>
 </resources>

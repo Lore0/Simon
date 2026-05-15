@@ -9,4 +9,7 @@
     <string name="new_game">Nuova partita</string>
     <string name="recap">Riepilogo partite</string>
     <string name="empty_games">Nessuna partita giocata. Premi play per iniziare!</string>
+    <string name="detail">Dettaglio partita</string>
+    <string name="correct_colors">Sequenza massima corretta:</string>
+    <string name="seq">Sequenza:</string>
 </resources>
