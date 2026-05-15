@@ -1,6 +1,7 @@
 package com.example.simon
 
 import android.app.Application
+import android.media.SoundPool
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
@@ -21,6 +22,19 @@ enum class GameState {
 }
 
 class GameViewModel (application: Application) : AndroidViewModel(application) {
+    // sound
+    private val soundPool: SoundPool = SoundPool.Builder().build()
+    private val soundMap = mutableMapOf<String, Int>()
+
+    init{
+        soundMap["R"] = soundPool.load(application, R.raw.r, 1)
+        soundMap["G"] = soundPool.load(application, R.raw.g, 1)
+        soundMap["B"] = soundPool.load(application, R.raw.b, 1)
+        soundMap["M"] = soundPool.load(application, R.raw.m, 1)
+        soundMap["Y"] = soundPool.load(application, R.raw.y, 1)
+        soundMap["C"] = soundPool.load(application, R.raw.c, 1)
+    }
+
     // init db
     private val gameDao = GameDatabase.getDatabase(application).gameDao()
     var state by mutableStateOf(GameState.READY)
@@ -36,6 +50,11 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
         playerSeq.clear()
         addNewColor()
         playCompSeq()
+    }
+
+    private fun playSound(color: String){
+        val soundID = soundMap[color] ?: return
+        soundPool.play(soundID, 1f, 1f, 1, 0, 1f)
     }
 
     private fun addNewColor() {
@@ -56,6 +75,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
                 if (state == GameState.GAME_OVER) return@launch
 
                 activeColor = color
+                playSound(color)
                 delay(600)
                 activeColor = null
                 delay(300)
@@ -68,6 +88,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
     fun onPlayerTurn(color: String) {
         if (state != GameState.PLAYER_TURN) return
 
+        playSound(color)
         playerSeq.add(color)
         val currentIndex = playerSeq.size - 1
 
