@@ -34,23 +34,15 @@ fun DetailScreen(game: Game) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Text(
-                text = stringResource(R.string.detail),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
+        Text(
+            text = stringResource(R.string.detail),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.height(32.dp))
-
         Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
         ) {
             Column(
@@ -59,10 +51,7 @@ fun DetailScreen(game: Game) {
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = stringResource(R.string.correct_colors),
-                    fontSize = 18.sp
-                )
+                Text(stringResource(R.string.correct_colors), fontSize = 18.sp)
                 Text(
                     text = game.maxCorrectLength.toString(),
                     fontSize = 48.sp,
@@ -71,41 +60,43 @@ fun DetailScreen(game: Game) {
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(32.dp))
-
         Text(
             text = stringResource(R.string.seq),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.Start)
         )
-
         Spacer(modifier = Modifier.height(8.dp))
+        SequenceDetail(game)
+    }
+}
 
-        val seq = game.sequence.split(",")
-        val correctPart = seq.take(game.errorIndex).joinToString(" - ")
-        val wrongPart = seq.drop(game.errorIndex).joinToString(" - ")
+@Composable
+private fun SequenceDetail(game: Game) {
+    val seq = game.sequence.split(",")
+    val correct = seq.take(game.errorIndex).joinToString(" - ")
+    val wrong = seq.drop(game.errorIndex).joinToString(" - ")
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
-                .padding(16.dp)
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    append(correctPart)
-                    if (correctPart.isNotEmpty() && wrongPart.isNotEmpty()) {
-                        append(" - ")
-                    }
-                    withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
-                        append(wrongPart)
-                    }
-                },
-                fontSize = 22.sp,
-                lineHeight = 32.sp
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Color.LightGray.copy(alpha = 0.3f),
+                RoundedCornerShape(8.dp)
             )
-        }
+            .padding(16.dp)
+    ) {
+        Text(
+            text = buildAnnotatedString {
+                append(correct)
+                if (correct.isNotEmpty() && wrong.isNotEmpty()) append(" - ")
+                withStyle(SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
+                    append(wrong)
+                }
+            },
+            fontSize = 22.sp,
+            lineHeight = 32.sp
+        )
     }
 }

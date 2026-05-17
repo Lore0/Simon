@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -59,15 +60,9 @@ fun GameScreen(
     }
 
     BackHandler {
-        if (viewModel.actualError) {
-            onRecap()
-        } else {
-            viewModel.handleGameOver(
-                errorIndex = viewModel.playerSeq.size,
-                isActualError = false
-            )
-            onRecap()
-        }
+        if (!viewModel.actualError)
+            viewModel.handleGameOver(errorIndex = viewModel.playerSeq.size, isActualError = false)
+        onRecap()
     }
 
     if (isLandscape) {
@@ -97,7 +92,7 @@ private fun LandscapeLayout(
                 .fillMaxHeight()
                 .padding(8.dp)
         ) {
-            ColorGrid(viewModel = viewModel, maxHeight = this.maxHeight)
+            ColorGrid(viewModel, this.maxHeight)
         }
         // parte destra: sequenza + bottoni
         Column(
@@ -140,7 +135,7 @@ private fun PortraitLayout(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            ColorGrid(viewModel = viewModel, maxHeight = this.maxHeight)
+            ColorGrid(viewModel, this.maxHeight)
         }
         SequenceBox(
             viewModel = viewModel,
@@ -155,10 +150,11 @@ private fun PortraitLayout(
 }
 
 @Composable
-private fun ColorGrid(viewModel: GameViewModel, maxHeight: androidx.compose.ui.unit.Dp) {
+private fun ColorGrid(viewModel: GameViewModel, maxHeight: Dp) {
     val sp = 12.dp
     // calcolo altezza
     val dynHeight = (maxHeight - sp * 2) / 3
+    val isComputerTurn = viewModel.state == GameState.COMP_TURN || viewModel.state == GameState.PAUSED
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -167,9 +163,7 @@ private fun ColorGrid(viewModel: GameViewModel, maxHeight: androidx.compose.ui.u
         horizontalArrangement = Arrangement.spacedBy(sp)
     ) {
         items(simonButtons) { (color, letter) ->
-            val isComputerTurn = viewModel.state == GameState.COMP_TURN || viewModel.state == GameState.PAUSED
             val isActive = viewModel.activeColor == letter
-
             val alpha = if (isActive) 1.0f else if (isComputerTurn) 0.35f else 0.6f
             val displayColor = color.copy(alpha = alpha)
 
@@ -195,6 +189,18 @@ private fun SequenceBox(
     scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
+    val isError = viewModel.actualError
+    val displayText = if (isError) {
+        stringResource(R.string.error_message)
+    } else if (viewModel.state == GameState.PLAYER_TURN) {
+        viewModel.playerSeq.joinToString(", ")
+    } else if (viewModel.state == GameState.PAUSED) {
+        stringResource(R.string.pause)
+    } else {
+        ""
+    }
+    val textColor = if (isError) Color.Red else Color.Black
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -203,25 +209,11 @@ private fun SequenceBox(
             .padding(8.dp),
         contentAlignment = Alignment.TopStart
     ) {
-        val isErrorState = viewModel.actualError
-
-        val displayText = if (isErrorState) {
-            stringResource(R.string.error_message)
-        } else if (viewModel.state == GameState.PLAYER_TURN) {
-            viewModel.playerSeq.joinToString(", ")
-        } else if (viewModel.state == GameState.PAUSED) {
-            stringResource(R.string.pause)
-        } else {
-            ""
-        }
-
-        val textColor = if (isErrorState) Color.Red else Color.Black
-
         Text(
             text = displayText,
             fontSize = 18.sp,
             color = textColor,
-            fontWeight = if (isErrorState) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = if (isError) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier.verticalScroll(scrollState)
         )
     }
@@ -238,12 +230,15 @@ private fun ActionButtons(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        val btnModifier = Modifier.weight(1f).height(height.dp)
+        val btnShape = RoundedCornerShape(16.dp)
+
         // avvia
         Button(
             onClick = { viewModel.startGame() },
             enabled = viewModel.state == GameState.READY,
-            modifier = Modifier.weight(1f).height(height.dp),
-            shape = RoundedCornerShape(16.dp)
+            modifier = btnModifier,
+            shape = btnShape
         ) {
             Text(stringResource(R.string.start), fontSize = 14.sp, fontWeight = FontWeight.Bold)
         }
@@ -252,8 +247,8 @@ private fun ActionButtons(
         Button(
             onClick = { viewModel.onPause() },
             enabled = viewModel.state == GameState.COMP_TURN || viewModel.state == GameState.PAUSED,
-            modifier = Modifier.weight(1f).height(height.dp),
-            shape = RoundedCornerShape(16.dp)
+            modifier = btnModifier,
+            shape = btnShape
         ) {
             val pauseText = if (viewModel.state == GameState.PAUSED) {
                 stringResource(R.string.resume)
@@ -277,8 +272,8 @@ private fun ActionButtons(
                 }
             },
             enabled = viewModel.state != GameState.READY,
-            modifier = Modifier.weight(1f).height(height.dp),
-            shape = RoundedCornerShape(16.dp)
+            modifier = btnModifier,
+            shape = btnShape
         ) {
             Text(stringResource(R.string.end), fontSize = 14.sp, fontWeight = FontWeight.Bold)
         }

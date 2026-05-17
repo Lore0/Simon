@@ -14,11 +14,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 
 enum class GameState {
-    READY,          // Partita non ancora iniziata
-    COMP_TURN,      // Il computer sta mostrando la sequenza di colori
-    PLAYER_TURN,    // Il computer ha finito, il giocatore deve premere i tasti
-    PAUSED,         // Il gioco è in pausa (possibile solo durante COMP_TURN)
-    GAME_OVER       // Il giocatore ha sbagliato o ha premuto "Fine partita"
+    READY,       // partita non ancora iniziata
+    COMP_TURN,   // il computer mostra la sequenza
+    PLAYER_TURN, // tocca al giocatore
+    PAUSED,      // pausa (solo durante COMP_TURN)
+    GAME_OVER    // errore o "Fine partita"
 }
 
 class GameViewModel (application: Application) : AndroidViewModel(application) {
@@ -69,10 +69,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
             delay(500)
 
             for (color in compSeq) {
-                while (state == GameState.PAUSED) {
-                    delay(100)
-                }
-
+                while (state == GameState.PAUSED) delay(100)
                 if (state == GameState.GAME_OVER) return@launch
 
                 activeColor = color
@@ -88,15 +85,17 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
 
     fun onPlayerTurn(color: String) {
         if (state != GameState.PLAYER_TURN) return
+
         viewModelScope.launch {
             activeColor = color
             delay(150)
             activeColor = null
         }
+
         playSound(color)
         playerSeq.add(color)
-        val currentIndex = playerSeq.size - 1
 
+        val currentIndex = playerSeq.size - 1
         if (playerSeq[currentIndex] == compSeq[currentIndex]) {
             // e se siamo alla fine della seq -> vai alla next seq
             if (playerSeq.size == compSeq.size) {
@@ -125,16 +124,16 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
         if (state == GameState.GAME_OVER) return
         state = GameState.GAME_OVER
         actualError = isActualError
+
+        // non salviamo seq da 1
         if (compSeq.size <= 1) return
 
-        val maxCorrect = compSeq.size - 1
-        val fullString = compSeq.joinToString(",")
+        val newGame = Game(
+            maxCorrectLength = compSeq.size - 1,
+            sequence = compSeq.joinToString(","),
+            errorIndex = errorIndex
+        )
         viewModelScope.launch {
-            val newGame = Game(
-                maxCorrectLength = maxCorrect,
-                sequence = fullString,
-                errorIndex = errorIndex
-            )
             gameDao.insertGame(newGame)
         }
     }

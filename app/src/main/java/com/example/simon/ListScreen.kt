@@ -55,10 +55,7 @@ fun ListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = 10.dp,
-                    bottom = innerPadding.calculateBottomPadding()
-                )
+                .padding(top = 10.dp, bottom = innerPadding.calculateBottomPadding())
                 .padding(horizontal = 16.dp)
         ) {
             Text(
@@ -79,7 +76,7 @@ fun ListScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(games) { game ->
-                        GamesRecap(game = game, onClick = { onDetail(game) } )
+                        GamesRecap(game, onClick = { onDetail(game) } )
                     }
                 }
             }
@@ -89,6 +86,11 @@ fun ListScreen(
 
 @Composable
 fun GamesRecap(game: Game, onClick: () -> Unit) {
+    val items = game.sequence.split(",")
+    // Dividiamo la lista in due (prima e dopo l'indice dove ha sbagliato)
+    val correct = items.take(game.errorIndex).joinToString(", ")
+    val wrong = items.drop(game.errorIndex).joinToString(", ")
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,20 +110,12 @@ fun GamesRecap(game: Game, onClick: () -> Unit) {
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(0.2f)
             )
-
-            val seq = game.sequence.split(",")
-            // Dividiamo la lista in due (prima e dopo l'indice dove ha sbagliato)
-            val correctPart = seq.take(game.errorIndex).joinToString(", ")
-            val wrongPart = seq.drop(game.errorIndex).joinToString(", ")
-
             Text(
                 text = buildAnnotatedString {
-                    append(correctPart)
-                    if (correctPart.isNotEmpty() && wrongPart.isNotEmpty()) {
-                        append(", ")
-                    }
+                    append(correct)
+                    if (correct.isNotEmpty() && wrong.isNotEmpty()) append(", ")
                     withStyle(style = SpanStyle(color = Color.Red)) {
-                        append(wrongPart)
+                        append(wrong)
                     }
                 },
                 maxLines = 1,
