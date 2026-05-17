@@ -59,10 +59,15 @@ fun GameScreen(
     }
 
     BackHandler {
-        viewModel.handleGameOver(
-            errorIndex = viewModel.playerSeq.size
-        )
-        onRecap()
+        if (viewModel.actualError) {
+            onRecap()
+        } else {
+            viewModel.handleGameOver(
+                errorIndex = viewModel.playerSeq.size,
+                isActualError = false
+            )
+            onRecap()
+        }
     }
 
     if (isLandscape) {
@@ -104,8 +109,7 @@ private fun LandscapeLayout(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             SequenceBox(
-                state = viewModel.state,
-                playerSeq = viewModel.playerSeq,
+                viewModel = viewModel,
                 scrollState = scrollState,
                 modifier = Modifier
                     .weight(0.5f)
@@ -139,8 +143,7 @@ private fun PortraitLayout(
             ColorGrid(viewModel = viewModel, maxHeight = this.maxHeight)
         }
         SequenceBox(
-            state = viewModel.state,
-            playerSeq = viewModel.playerSeq,
+            viewModel = viewModel,
             scrollState = scrollState,
             modifier = Modifier
                 .weight(0.3f)
@@ -188,8 +191,7 @@ private fun ColorGrid(viewModel: GameViewModel, maxHeight: androidx.compose.ui.u
 
 @Composable
 private fun SequenceBox(
-    state: GameState,
-    playerSeq: List<String>,
+    viewModel: GameViewModel,
     scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
@@ -201,13 +203,13 @@ private fun SequenceBox(
             .padding(8.dp),
         contentAlignment = Alignment.TopStart
     ) {
-        val isErrorState = state == GameState.GAME_OVER
+        val isErrorState = viewModel.actualError
 
         val displayText = if (isErrorState) {
             stringResource(R.string.error_message)
-        } else if (state == GameState.PLAYER_TURN) {
-            playerSeq.joinToString(", ")
-        } else if (state == GameState.PAUSED) {
+        } else if (viewModel.state == GameState.PLAYER_TURN) {
+            viewModel.playerSeq.joinToString(", ")
+        } else if (viewModel.state == GameState.PAUSED) {
             stringResource(R.string.pause)
         } else {
             ""
@@ -264,12 +266,17 @@ private fun ActionButtons(
         // fine partita
         Button(
             onClick = {
-                viewModel.handleGameOver(
-                    errorIndex = viewModel.playerSeq.size
-                )
-                onRecap()
+                if (viewModel.actualError) {
+                    onRecap()
+                } else {
+                    viewModel.handleGameOver(
+                        errorIndex = viewModel.playerSeq.size,
+                        isActualError = false
+                    )
+                    onRecap()
+                }
             },
-            enabled = viewModel.state != GameState.READY && viewModel.state != GameState.GAME_OVER,
+            enabled = viewModel.state != GameState.READY,
             modifier = Modifier.weight(1f).height(height.dp),
             shape = RoundedCornerShape(16.dp)
         ) {

@@ -39,6 +39,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
     private val gameDao = GameDatabase.getDatabase(application).gameDao()
     var state by mutableStateOf(GameState.READY)
     var activeColor by mutableStateOf<String?>(null)
+    var actualError by mutableStateOf(false)
 
     val compSeq = mutableStateListOf<String>()
     val playerSeq = mutableStateListOf<String>()
@@ -107,7 +108,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
                 }
             }
         } else {
-            handleGameOver(currentIndex)
+            handleGameOver(currentIndex, true)
         }
     }
 
@@ -120,9 +121,10 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
     }
 
     // default se premo direttamente fine partita (size)
-    fun handleGameOver(errorIndex: Int = playerSeq.size) {
+    fun handleGameOver(errorIndex: Int = playerSeq.size, isActualError: Boolean = false) {
         if (state == GameState.GAME_OVER) return
         state = GameState.GAME_OVER
+        actualError = isActualError
         if (compSeq.size <= 1) return
 
         val maxCorrect = compSeq.size - 1
