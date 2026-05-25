@@ -111,7 +111,7 @@ private fun LandscapeLayout(
                     .fillMaxWidth()
                     .padding(bottom = 15.dp)
             )
-            ActionButtons(viewModel, height = 60, onRecap)
+            ActionButtons(viewModel, height = 60.dp, onRecap)
         }
     }
 }
@@ -145,7 +145,7 @@ private fun PortraitLayout(
                 .padding(vertical = 12.dp)
         )
         // Bottoni in basso
-        ActionButtons(viewModel, height = 55, onRecap)
+        ActionButtons(viewModel, height = 55.dp, onRecap)
     }
 }
 
@@ -222,7 +222,7 @@ private fun SequenceBox(
 @Composable
 private fun ActionButtons(
     viewModel: GameViewModel,
-    height: Int,
+    height: Dp,
     onRecap: () -> Unit
 ) {
     Row(
@@ -230,7 +230,7 @@ private fun ActionButtons(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        val btnModifier = Modifier.weight(1f).height(height.dp)
+        val btnModifier = Modifier.weight(1f).height(height)
         val btnShape = RoundedCornerShape(16.dp)
 
         // avvia
