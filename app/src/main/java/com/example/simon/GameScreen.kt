@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 
 private val simonButtons = listOf(
     Color.Red to "R",
@@ -63,6 +65,14 @@ fun GameScreen(
         if (!viewModel.actualError)
             viewModel.handleGameOver(errorIndex = viewModel.playerSeq.size, isActualError = false)
         onRecap()
+    }
+
+    // quando app in va in background continua a mostrare seq se in comp_turn
+    // stoppiamo manualmente -> mettiamo in pausa
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        if (viewModel.state == GameState.COMP_TURN) {
+            viewModel.onPause()
+        }
     }
 
     if (isLandscape) {
