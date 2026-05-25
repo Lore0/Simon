@@ -163,13 +163,13 @@ private fun ColorGrid(viewModel: GameViewModel, maxHeight: Dp) {
         horizontalArrangement = Arrangement.spacedBy(sp)
     ) {
         items(simonButtons) { (color, letter) ->
-            val isActive = viewModel.activeColor == letter
+            val isActive = viewModel.activeColor == letter || viewModel.flashAll
             val alpha = if (isActive) 1.0f else if (isComputerTurn) 0.35f else 0.6f
             val displayColor = color.copy(alpha = alpha)
 
             Button(
                 onClick = { viewModel.onPlayerTurn(letter) },
-                enabled = viewModel.state == GameState.PLAYER_TURN,
+                enabled = viewModel.state == GameState.PLAYER_TURN && !viewModel.flashAll,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = displayColor,
                     disabledContainerColor = displayColor

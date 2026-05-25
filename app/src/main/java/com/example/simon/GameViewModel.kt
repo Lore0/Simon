@@ -33,6 +33,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
         soundMap["M"] = soundPool.load(application, R.raw.m, 1)
         soundMap["Y"] = soundPool.load(application, R.raw.y, 1)
         soundMap["C"] = soundPool.load(application, R.raw.c, 1)
+        soundMap["game_over"] = soundPool.load(application, R.raw.game_over, 1)
     }
 
     // init db
@@ -40,6 +41,7 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
     var state by mutableStateOf(GameState.READY)
     var activeColor by mutableStateOf<String?>(null)
     var actualError by mutableStateOf(false)
+    var flashAll by mutableStateOf(false)
 
     val compSeq = mutableStateListOf<String>()
     val playerSeq = mutableStateListOf<String>()
@@ -56,6 +58,11 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
     private fun playSound(color: String){
         val soundID = soundMap[color] ?: return
         soundPool.play(soundID, 1f, 1f, 1, 0, 1f)
+    }
+
+    private fun playGameOverSound() {
+        val soundId = soundMap["game_over"] ?: return
+        soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
     }
 
     private fun addNewColor() {
@@ -123,7 +130,16 @@ class GameViewModel (application: Application) : AndroidViewModel(application) {
     fun handleGameOver(errorIndex: Int = playerSeq.size, isActualError: Boolean = false) {
         if (state == GameState.GAME_OVER) return
         state = GameState.GAME_OVER
-        actualError = isActualError
+
+        if (isActualError) {
+            viewModelScope.launch {
+                playGameOverSound()
+                flashAll = true
+                delay(800)
+                flashAll = false
+                actualError = true
+            }
+        }
 
         // non salviamo seq da 1
         if (compSeq.size <= 1) return
