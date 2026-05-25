@@ -60,9 +60,9 @@ class GameViewModel (
             // rifacciamo vedere seq da inzio
             playCompSeq()
         } else if (state == GameState.PLAYER_TURN) {
-            // utente puó reinserire seq da capo
-            playerSeq.clear()
-            savedStateHandle["player"] = ArrayList(playerSeq)
+            // utente riprende da dove si era fermato
+            activeColor = null
+            savedStateHandle["color"] = null
         }
     }
 
