@@ -1,15 +1,15 @@
-package com.example.simon
+package com.example.simon.viewmodel
 
 import android.app.Application
 import android.media.SoundPool
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.simon.R
 import com.example.simon.db.Game
 import com.example.simon.db.GameDatabase
 import kotlinx.coroutines.launch

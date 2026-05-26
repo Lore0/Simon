@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import com.example.simon.viewmodel.GameState
+import com.example.simon.viewmodel.GameViewModel
 
 private val simonButtons = listOf(
     Color.Red to "R",

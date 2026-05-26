@@ -32,6 +32,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simon.db.Game
+import com.example.simon.viewmodel.ListViewModel
 
 @Composable
 fun ListScreen(

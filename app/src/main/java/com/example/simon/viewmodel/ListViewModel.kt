@@ -1,4 +1,4 @@
-package com.example.simon
+package com.example.simon.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
