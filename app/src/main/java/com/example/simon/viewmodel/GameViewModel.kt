@@ -55,12 +55,9 @@ class GameViewModel (
         soundMap["game_over"] = soundPool.load(application, R.raw.game_over, 1)
 
         // TODO: da scrivere specifiche README -> decisione quando ripristino stato
-        if (state == GameState.PAUSED || state == GameState.COMP_TURN) {
-            activeColor = null
-            savedStateHandle["color"] = null
-            // rifacciamo vedere seq da inzio
-        } else if (state == GameState.PLAYER_TURN) {
-            // utente riprende da dove si era fermato
+        if (state == GameState.PAUSED || state == GameState.COMP_TURN || state == GameState.PLAYER_TURN) {
+            // rifacciamo vedere seq da inzio (comp_turn)
+            // mentre utente riprende da dove si era fermato
             activeColor = null
             savedStateHandle["color"] = null
         }
