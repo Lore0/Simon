@@ -35,6 +35,7 @@ class GameViewModel (
     private val soundPool: SoundPool = SoundPool.Builder().build()
     private val soundMap = mutableMapOf<String, Int>()
 
+    private var isPlayingSequence = false
     var state by mutableStateOf(savedStateHandle["state"] ?: GameState.READY)
     var activeColor by mutableStateOf<String?>(savedStateHandle["color"])
     var actualError by mutableStateOf(savedStateHandle["error"] ?: false)
@@ -54,11 +55,10 @@ class GameViewModel (
         soundMap["game_over"] = soundPool.load(application, R.raw.game_over, 1)
 
         // TODO: da scrivere specifiche README -> decisione quando ripristino stato
-        if (state == GameState.COMP_TURN) {
+        if (state == GameState.PAUSED || state == GameState.COMP_TURN) {
             activeColor = null
             savedStateHandle["color"] = null
             // rifacciamo vedere seq da inzio
-            playCompSeq()
         } else if (state == GameState.PLAYER_TURN) {
             // utente riprende da dove si era fermato
             activeColor = null
@@ -90,6 +90,7 @@ class GameViewModel (
 
     private fun playCompSeq() {
         viewModelScope.launch {
+            isPlayingSequence = true
             state = GameState.COMP_TURN
             savedStateHandle["state"] = state
             playerSeq.clear()
@@ -111,6 +112,7 @@ class GameViewModel (
 
             state = GameState.PLAYER_TURN
             savedStateHandle["state"] = state
+            isPlayingSequence = false
         }
     }
 
@@ -152,6 +154,9 @@ class GameViewModel (
         } else if (state == GameState.PAUSED) {
             state = GameState.COMP_TURN
             savedStateHandle["state"] = state
+            if (!isPlayingSequence) {
+                playCompSeq()
+            }
         }
     }
 
