@@ -273,12 +273,7 @@ private fun ActionButtons(
         // fine partita
         Button(
             onClick = {
-                if (!viewModel.actualError) {
-                    viewModel.handleGameOver(
-                        errorIndex = viewModel.playerSeq.size,
-                        isActualError = false
-                    )
-                }
+                viewModel.handleGameOver()
                 onRecap()
             },
             enabled = viewModel.state != GameState.READY,
