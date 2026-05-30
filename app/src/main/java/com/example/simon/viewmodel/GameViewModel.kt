@@ -96,7 +96,10 @@ class GameViewModel (
 
             for (color in compSeq) {
                 while (state == GameState.PAUSED) delay(100)
-                if (state == GameState.GAME_OVER) return@launch
+                if (state == GameState.GAME_OVER) {
+                    isPlayingSequence = false
+                    return@launch
+                }
 
                 activeColor = color
                 savedStateHandle["color"] = color
