@@ -138,7 +138,7 @@ class GameViewModel (
             if (playerSeq.size == compSeq.size) {
                 viewModelScope.launch {
                     // delay per far vedere l'ultima lettera
-                    delay(500)
+                    delay(300)
                     addNewColor()
                     playCompSeq()
                 }
