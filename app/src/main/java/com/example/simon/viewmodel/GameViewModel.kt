@@ -118,6 +118,7 @@ class GameViewModel (
 
     fun onPlayerTurn(color: String) {
         if (state != GameState.PLAYER_TURN) return
+        if (playerSeq.size >= compSeq.size) return
 
         viewModelScope.launch {
             activeColor = color
@@ -163,6 +164,7 @@ class GameViewModel (
     // default se premo direttamente fine partita (size)
     fun handleGameOver(errorIndex: Int = playerSeq.size, isActualError: Boolean = false) {
         if (state == GameState.GAME_OVER) return
+        val isSave = compSeq.size > 1 || (compSeq.size == 1 && state == GameState.PLAYER_TURN)
         state = GameState.GAME_OVER
         savedStateHandle["state"] = state
 
@@ -180,8 +182,7 @@ class GameViewModel (
             savedStateHandle["error"] = false
         }
 
-        // non salviamo seq da 1
-        if (compSeq.size <= 1) return
+        if (!isSave || compSeq.isEmpty()) return
 
         val newGame = Game(
             maxCorrectLength = compSeq.size - 1,

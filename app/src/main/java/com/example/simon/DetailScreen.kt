@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,10 +31,12 @@ import com.example.simon.db.Game
 
 @Composable
 fun DetailScreen(game: Game) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -75,8 +80,9 @@ fun DetailScreen(game: Game) {
 @Composable
 private fun SequenceDetail(game: Game) {
     val seq = game.sequence.split(",")
-    val correct = seq.take(game.errorIndex).joinToString(" - ")
-    val wrong = seq.drop(game.errorIndex).joinToString(" - ")
+    val index = if (game.errorIndex > seq.size) seq.size else game.errorIndex
+    val correct = seq.take(index).joinToString(" - ")
+    val wrong = seq.drop(index).joinToString(" - ")
 
     Box(
         modifier = Modifier
