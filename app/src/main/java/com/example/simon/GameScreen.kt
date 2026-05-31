@@ -64,7 +64,7 @@ fun GameScreen(
     }
 
     BackHandler {
-        if (!viewModel.actualError)
+        if (viewModel.state != GameState.GAME_OVER)
             viewModel.handleGameOver(errorIndex = viewModel.playerSeq.size, isActualError = false)
         onRecap()
     }
@@ -176,7 +176,11 @@ private fun ColorGrid(viewModel: GameViewModel, maxHeight: Dp) {
     ) {
         items(simonButtons) { (color, letter) ->
             val isActive = viewModel.activeColor == letter || viewModel.flashAll
-            val alpha = if (isActive) 1.0f else if (isComputerTurn) 0.35f else 0.6f
+            val alpha = when {
+                isActive -> 1.0f
+                isComputerTurn -> 0.35f
+                else -> 0.6f
+            }
             val displayColor = color.copy(alpha = alpha)
 
             Button(
@@ -202,14 +206,11 @@ private fun SequenceBox(
     modifier: Modifier = Modifier
 ) {
     val isError = viewModel.actualError
-    val displayText = if (isError) {
-        stringResource(R.string.error_message)
-    } else if (viewModel.state == GameState.PLAYER_TURN) {
-        viewModel.playerSeq.joinToString(", ")
-    } else if (viewModel.state == GameState.PAUSED) {
-        stringResource(R.string.pause)
-    } else {
-        ""
+    val displayText = when {
+        isError -> stringResource(R.string.error_message)
+        viewModel.state == GameState.PLAYER_TURN -> viewModel.playerSeq.joinToString(", ")
+        viewModel.state == GameState.PAUSED -> stringResource(R.string.pause)
+        else -> ""
     }
     val textColor = if (isError) Color.Red else Color.Black
 
@@ -276,7 +277,7 @@ private fun ActionButtons(
                 viewModel.handleGameOver()
                 onRecap()
             },
-            enabled = viewModel.state != GameState.READY,
+            enabled = viewModel.state != GameState.READY && viewModel.state != GameState.GAME_OVER,
             modifier = btnModifier,
             shape = btnShape
         ) {

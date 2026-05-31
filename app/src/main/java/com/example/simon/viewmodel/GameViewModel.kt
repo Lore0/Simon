@@ -167,13 +167,13 @@ class GameViewModel (
         savedStateHandle["state"] = state
 
         if (isActualError) {
+            actualError = true
+            savedStateHandle["error"] = true
             viewModelScope.launch {
                 playGameOverSound()
                 flashAll = true
                 delay(800)
                 flashAll = false
-                actualError = true
-                savedStateHandle["error"] = true
             }
         } else {
             actualError = false
